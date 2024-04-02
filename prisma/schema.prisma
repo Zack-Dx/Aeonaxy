@@ -17,9 +17,9 @@ datasource db {
 model User {
   id             Int          @id @default(autoincrement())
   email          String       @unique
-  name           String?
+  name           String
   password       String
-  profilePicture String?
+  profilePicture String
   enrollments    Enrollment[]
 }
 
