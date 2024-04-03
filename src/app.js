@@ -2,6 +2,7 @@ import express from 'express'
 import router from './routes/user.routes.js'
 import cloudinary from 'cloudinary'
 import { CONFIG } from './config/index.js'
+import { errorHandler } from './middleware/error.middleware.js'
 
 const app = express()
 
@@ -17,5 +18,8 @@ cloudinary.config({
 
 // Routes
 app.use('/api/user', router)
+
+// Global Error Handler
+app.use(errorHandler)
 
 export { app }

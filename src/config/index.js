@@ -2,6 +2,7 @@ import { config } from 'dotenv'
 config()
 
 const {
+    NODE_ENV,
     PORT,
     DATABASE_URL,
     CLOUDINARY_API_SECRET,
@@ -10,6 +11,7 @@ const {
 } = process.env
 
 export const CONFIG = {
+    NODE_ENV,
     PORT,
     DATABASE_URL,
     CLOUDINARY_API_SECRET,
