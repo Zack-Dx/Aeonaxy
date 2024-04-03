@@ -119,5 +119,22 @@ export function UserController() {
                     new ApiResponse(200, response, 'Logged in successfully.')
                 );
         }),
+        profile: asyncHandler(async (req, res, next) => {
+            const user = await prisma.user.findUnique({
+                where: { id: req.user.id },
+                select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                    profilePicture: true,
+                },
+            });
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(200, user, 'Profile fetched successfully.')
+                );
+        }),
     };
 }
