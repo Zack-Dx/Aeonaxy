@@ -1,5 +1,5 @@
-import { config } from 'dotenv'
-config()
+import { config } from 'dotenv';
+config();
 
 const {
     NODE_ENV,
@@ -8,7 +8,7 @@ const {
     CLOUDINARY_API_SECRET,
     CLOUDINARY_API_KEY,
     CLOUDINARY_CLOUD_NAME,
-} = process.env
+} = process.env;
 
 export const CONFIG = {
     NODE_ENV,
@@ -17,4 +17,4 @@ export const CONFIG = {
     CLOUDINARY_API_SECRET,
     CLOUDINARY_API_KEY,
     CLOUDINARY_CLOUD_NAME,
-}
+};

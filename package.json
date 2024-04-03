@@ -8,8 +8,8 @@
         "start": "node src/index.js",
         "dev": "nodemon src/index.js",
         "prisma:migrate": "npx prisma migrate dev",
-        "format:check": "yarn prettier ./src --check",
-        "format:fix": "yarn exec prettier ./src --write",
+        "format:check": "npx prettier . --check",
+        "format:fix": "npx prettier . --write",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "keywords": [],
