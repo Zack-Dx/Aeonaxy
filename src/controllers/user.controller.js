@@ -11,7 +11,7 @@ import { generateAccessToken } from '../utils/jwtUtils.js';
 
 export function UserController() {
     return {
-        createUser: asyncHandler(async (req, res, next) => {
+        create: asyncHandler(async (req, res) => {
             const { email, name, password } = req.body;
             const file = req.file;
 
@@ -76,7 +76,7 @@ export function UserController() {
                     )
                 );
         }),
-        loginUser: asyncHandler(async (req, res, next) => {
+        login: asyncHandler(async (req, res) => {
             const { email, password } = req.body;
 
             // Input  Validation
@@ -119,7 +119,7 @@ export function UserController() {
                     new ApiResponse(200, response, 'Logged in successfully.')
                 );
         }),
-        profile: asyncHandler(async (req, res, next) => {
+        profile: asyncHandler(async (req, res) => {
             const user = await prisma.user.findUnique({
                 where: { id: req.user.id },
                 select: {
@@ -134,6 +134,65 @@ export function UserController() {
                 .status(200)
                 .json(
                     new ApiResponse(200, user, 'Profile fetched successfully.')
+                );
+        }),
+        update: asyncHandler(async (req, res) => {
+            const { id, profilePicture } = req.user;
+            const { name } = req.body;
+            const file = req.file;
+
+            // Validation
+            if (!name && !file) {
+                throw new ApiError(400, 'All fields are required.');
+            }
+
+            // New Fields
+            let newAvatarUrl = '';
+            let newName = '';
+
+            // Updating Fields
+            if (name) {
+                newName = name;
+            }
+
+            if (file) {
+                const public_id = profilePicture
+                    .split('/')
+                    .at(-1)
+                    .split('.')[0];
+                await cloudinary.uploader.destroy(public_id);
+                const { secure_url } = await cloudinary.uploader.upload(
+                    file.path
+                );
+                await removeFileFromLocal(file.path);
+                newAvatarUrl = secure_url;
+            }
+
+            const updatedData = {};
+
+            if (newName) {
+                updatedData.name = newName;
+            }
+
+            if (newAvatarUrl) {
+                updatedData.profilePicture = newAvatarUrl;
+            }
+
+            const updatedUser = await prisma.user.update({
+                where: {
+                    id,
+                },
+                data: { ...updatedData },
+            });
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        updatedUser,
+                        'Profile updated successfully.'
+                    )
                 );
         }),
     };

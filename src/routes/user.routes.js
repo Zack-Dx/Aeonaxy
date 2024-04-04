@@ -5,12 +5,13 @@ import { upload } from '../middleware/multer.middleware.js';
 
 const router = Router();
 
+router.route('/create').post(upload.single('avatar'), UserController().create); // Register Route
+
+router.route('/login').post(UserController().login); // Login Route
+
 router
-    .route('/create')
-    .post(upload.single('avatar'), UserController().createUser); // Register Route
-
-router.route('/login').post(UserController().loginUser); // Login Route
-
-router.route('/profile').get(authMiddleware, UserController().profile); // Profile Route
+    .route('/profile')
+    .get(authMiddleware, UserController().profile)
+    .patch(authMiddleware, upload.single('avatar'), UserController().update); // Profile Route
 
 export default router;
