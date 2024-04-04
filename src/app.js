@@ -1,5 +1,6 @@
 import express from 'express';
-import router from './routes/user.routes.js';
+import userRouter from './routes/user.routes.js';
+import courseRouter from './routes/course.routes.js';
 import cloudinary from 'cloudinary';
 import { CONFIG } from './config/index.js';
 import { errorHandler } from './middleware/error.middleware.js';
@@ -17,7 +18,8 @@ cloudinary.config({
 });
 
 // Routes
-app.use('/api/user', router);
+app.use('/api/user', userRouter);
+app.use('/api/course', courseRouter);
 
 // Global Error Handler
 app.use(errorHandler);
