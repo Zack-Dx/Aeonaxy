@@ -10,6 +10,7 @@ const {
     CLOUDINARY_CLOUD_NAME,
     JWT_SECRET,
     IMAGE_HOST,
+    DEFAULT_USER_ROLE,
 } = process.env;
 
 export const CONFIG = {
@@ -21,4 +22,5 @@ export const CONFIG = {
     CLOUDINARY_CLOUD_NAME,
     JWT_SECRET,
     IMAGE_HOST,
+    DEFAULT_USER_ROLE,
 };

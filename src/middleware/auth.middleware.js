@@ -23,6 +23,7 @@ export const authMiddleware = asyncHandler(async (req, _, next) => {
                 email: true,
                 name: true,
                 profilePicture: true,
+                role: true,
             },
         });
 
@@ -35,4 +36,12 @@ export const authMiddleware = asyncHandler(async (req, _, next) => {
     } catch (error) {
         throw new ApiError(401, error?.message || 'Invalid access token');
     }
+});
+
+export const adminAuthMiddleware = asyncHandler((req, res, next) => {
+    if (req.user.role === 'admin') {
+        next();
+        return;
+    }
+    throw new ApiError(401, 'Unauthorized request.');
 });

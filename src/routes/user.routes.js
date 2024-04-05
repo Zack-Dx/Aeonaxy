@@ -13,6 +13,6 @@ router
     .route('/profile')
     .get(authMiddleware, UserController().profile)
     .patch(authMiddleware, upload.single('avatar'), UserController().update)
-    .delete(authMiddleware, UserController().delete); // Profile Route
+    .delete(authMiddleware, UserController().delete); // Profile Route (GET, UPDATE, DELETE)
 
 export default router;

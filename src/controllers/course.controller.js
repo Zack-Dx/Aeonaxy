@@ -61,5 +61,36 @@ export function CourseController() {
                     )
                 );
         }),
+        delete: asyncHandler(async (req, res, next) => {
+            const { id } = req.params;
+
+            // Checking if course exists or not
+            const existingCourse = await prisma.course.findUnique({
+                where: {
+                    id,
+                },
+            });
+
+            if (!existingCourse) {
+                throw new ApiError(404, 'Course not found.');
+            }
+
+            // Deleting the course
+            const deleteCourse = await prisma.course.delete({
+                where: {
+                    id,
+                },
+            });
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        deleteCourse,
+                        'Course deleted successfully.'
+                    )
+                );
+        }),
     };
 }

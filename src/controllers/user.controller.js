@@ -64,6 +64,7 @@ export function UserController() {
                     email,
                     password: hashedPassword,
                     profilePicture: avatarUrl,
+                    role: CONFIG.DEFAULT_USER_ROLE,
                 },
             });
 
@@ -212,13 +213,19 @@ export function UserController() {
             }
 
             // Deleting the user
-            await prisma.user.delete({
+            const deletedUser = await prisma.user.delete({
                 where: { id },
             });
 
             return res
                 .status(200)
-                .json(new ApiResponse(200, null, 'User deleted successfully.'));
+                .json(
+                    new ApiResponse(
+                        200,
+                        deletedUser,
+                        'User deleted successfully.'
+                    )
+                );
         }),
     };
 }
