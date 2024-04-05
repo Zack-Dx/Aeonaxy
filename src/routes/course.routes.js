@@ -16,4 +16,8 @@ router
     .route('/delete/:id')
     .delete(authMiddleware, adminAuthMiddleware, CourseController().delete); // Delete Course Route
 
+router
+    .route('/update/:id')
+    .patch(authMiddleware, adminAuthMiddleware, CourseController().update); // Update Course Route
+
 export default router;

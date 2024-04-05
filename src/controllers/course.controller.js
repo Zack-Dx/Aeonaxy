@@ -61,7 +61,62 @@ export function CourseController() {
                     )
                 );
         }),
-        delete: asyncHandler(async (req, res, next) => {
+        update: asyncHandler(async (req, res) => {
+            const { id } = req.params;
+
+            const { name, category, level, description } = req.body;
+
+            if (!name && !category && !level && !description) {
+                throw new ApiError(
+                    400,
+                    'At least one field is required for update.'
+                );
+            }
+
+            // Checking if course exists
+            const existingCourse = await prisma.course.findUnique({
+                where: {
+                    id,
+                },
+            });
+
+            if (!existingCourse) {
+                throw new ApiError(404, 'Course not found.');
+            }
+
+            // Constrcuting Update Object
+            const updateFields = {};
+
+            if (name) {
+                updateFields.name = name;
+            }
+            if (category) {
+                updateFields.category = category;
+            }
+            if (level) {
+                updateFields.level = level;
+            }
+            if (description) {
+                updateFields.description = description;
+            }
+
+            // Update the course
+            const updatedCourse = await prisma.course.update({
+                where: { id },
+                data: updateFields,
+            });
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        updatedCourse,
+                        'Course updated successfully.'
+                    )
+                );
+        }),
+        delete: asyncHandler(async (req, res) => {
             const { id } = req.params;
 
             // Checking if course exists or not

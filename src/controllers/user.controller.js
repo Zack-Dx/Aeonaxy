@@ -145,7 +145,10 @@ export function UserController() {
 
             // Validation
             if (!name && !file) {
-                throw new ApiError(400, 'All fields are required.');
+                throw new ApiError(
+                    400,
+                    'At least one field is required for update.'
+                );
             }
 
             // New Fields
