@@ -9,6 +9,7 @@ const {
     CLOUDINARY_API_KEY,
     CLOUDINARY_CLOUD_NAME,
     JWT_SECRET,
+    IMAGE_HOST,
 } = process.env;
 
 export const CONFIG = {
@@ -19,4 +20,5 @@ export const CONFIG = {
     CLOUDINARY_API_KEY,
     CLOUDINARY_CLOUD_NAME,
     JWT_SECRET,
+    IMAGE_HOST,
 };

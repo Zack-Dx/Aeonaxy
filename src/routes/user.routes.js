@@ -12,6 +12,7 @@ router.route('/login').post(UserController().login); // Login Route
 router
     .route('/profile')
     .get(authMiddleware, UserController().profile)
-    .patch(authMiddleware, upload.single('avatar'), UserController().update); // Profile Route
+    .patch(authMiddleware, upload.single('avatar'), UserController().update)
+    .delete(authMiddleware, UserController().delete); // Profile Route
 
 export default router;

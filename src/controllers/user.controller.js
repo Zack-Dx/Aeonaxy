@@ -8,6 +8,7 @@ import { comparePassword, hashPassword } from '../utils/bcryptUtils.js';
 import { removeFileFromLocal } from '../utils/fileUtils.js';
 import { checkPasswordStrength } from '../utils/helpers.js';
 import { generateAccessToken } from '../utils/jwtUtils.js';
+import { CONFIG } from '../config/index.js';
 
 export function UserController() {
     return {
@@ -92,7 +93,7 @@ export function UserController() {
             });
 
             if (!existingUser) {
-                throw new ApiError(404, 'No such user exists in the database.');
+                throw new ApiError(404, 'User not found.');
             }
 
             // Password Validation
@@ -156,11 +157,14 @@ export function UserController() {
             }
 
             if (file) {
-                const public_id = profilePicture
-                    .split('/')
-                    .at(-1)
-                    .split('.')[0];
-                await cloudinary.uploader.destroy(public_id);
+                if (profilePicture.startsWith(CONFIG.IMAGE_HOST)) {
+                    const public_id = profilePicture
+                        .split('/')
+                        .at(-1)
+                        .split('.')[0];
+                    await cloudinary.uploader.destroy(public_id);
+                }
+
                 const { secure_url } = await cloudinary.uploader.upload(
                     file.path
                 );
@@ -194,6 +198,27 @@ export function UserController() {
                         'Profile updated successfully.'
                     )
                 );
+        }),
+        delete: asyncHandler(async (req, res) => {
+            const { id, profilePicture } = req.user;
+
+            // Removing the assets from cloudinary
+            if (profilePicture.startsWith(CONFIG.IMAGE_HOST)) {
+                const public_id = profilePicture
+                    .split('/')
+                    .at(-1)
+                    .split('.')[0];
+                await cloudinary.uploader.destroy(public_id);
+            }
+
+            // Deleting the user
+            await prisma.user.delete({
+                where: { id },
+            });
+
+            return res
+                .status(200)
+                .json(new ApiResponse(200, null, 'User deleted successfully.'));
         }),
     };
 }
