@@ -15,4 +15,10 @@ router
     .patch(authMiddleware, upload.single('avatar'), UserController().update)
     .delete(authMiddleware, UserController().delete); // Profile Route (GET, UPDATE, DELETE)
 
+router.route('/forgot-pass/:email').post(UserController().forgotPassword); // Forgot Password Route
+
+router
+    .route('/reset-pass/:user_id/:reset_token')
+    .post(UserController().resetPassword); // Reset Password Route
+
 export default router;

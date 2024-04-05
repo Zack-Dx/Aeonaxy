@@ -1,4 +1,5 @@
 import { DEFAULT_AVATAR_URL } from '../constants/index.js';
+import jwt from 'jsonwebtoken';
 import { prisma } from '../../client/prismaClient.js';
 import { v2 as cloudinary } from 'cloudinary';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -7,8 +8,12 @@ import { ApiResponse } from '../utils/ApiResponse.js';
 import { comparePassword, hashPassword } from '../utils/bcryptUtils.js';
 import { removeFileFromLocal } from '../utils/fileUtils.js';
 import { checkPasswordStrength } from '../utils/helpers.js';
-import { generateAccessToken } from '../utils/jwtUtils.js';
+import {
+    generateAccessToken,
+    generateResetPassToken,
+} from '../utils/jwtUtils.js';
 import { CONFIG } from '../config/index.js';
+import { sendResetPasswordEmail } from '../utils/mailerUtils.js';
 
 export function UserController() {
     return {
@@ -228,6 +233,97 @@ export function UserController() {
                         deletedUser,
                         'User deleted successfully.'
                     )
+                );
+        }),
+        forgotPassword: asyncHandler(async (req, res) => {
+            const { email } = req.params;
+
+            // Existing User Check
+            const existingUser = await prisma.user.findUnique({
+                where: {
+                    email,
+                },
+            });
+
+            if (!existingUser) {
+                throw new ApiError(404, 'User not found.');
+            }
+
+            // Generate Reset Pass Token
+            const resetPasswordToken = generateResetPassToken({
+                sub: existingUser.id,
+            });
+
+            await prisma.user.update({
+                where: {
+                    email,
+                },
+                data: {
+                    resetPasswordToken,
+                },
+            });
+
+            // Sending the email
+            sendResetPasswordEmail(existingUser, resetPasswordToken);
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(
+                        200,
+                        null,
+                        'Password reset link sent successfully, please check your email.'
+                    )
+                );
+        }),
+        resetPassword: asyncHandler(async (req, res) => {
+            const { user_id, reset_token } = req.params;
+            const { newPassword } = req.body;
+
+            // Validation
+            if (!newPassword) {
+                throw new ApiError(400, 'New Password is required.');
+            }
+
+            // Password Strength Check
+            const passwordStrengthError = checkPasswordStrength(newPassword);
+
+            if (passwordStrengthError) {
+                throw new ApiError(400, passwordStrengthError);
+            }
+
+            // Existing User Check
+            const existingUser = await prisma.user.findUnique({
+                where: {
+                    id: user_id,
+                },
+            });
+
+            if (!existingUser) {
+                throw new ApiError(404, 'User not found.');
+            }
+
+            // Matching the tokens
+            if (existingUser.resetPasswordToken !== reset_token) {
+                throw new ApiError(401, 'Invalid Token.');
+            }
+
+            // Hashing & Saving the password
+            const hashedPassword = await hashPassword(newPassword);
+            await prisma.user.update({
+                where: {
+                    id: user_id,
+                },
+                data: {
+                    password: hashedPassword,
+                    resetPasswordToken: '',
+                },
+            });
+
+            return res
+                .status(200)
+                .json(
+                    new ApiResponse(200, null, 'Password updated successfully.')
                 );
         }),
     };
