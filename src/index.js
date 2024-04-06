@@ -1,12 +1,15 @@
 import { app } from './app.js';
 import { CONFIG } from './config/index.js';
+import { logger } from './config/logger.js';
 (async () => {
     try {
         app.listen(CONFIG.PORT, () => {
-            console.log(`Server listening on ${CONFIG.PORT}!`);
+            logger.info(`Server listening on ${CONFIG.PORT}!`);
         });
     } catch (error) {
-        console.log(error);
-        process.exit(1);
+        logger.error(error.message);
+        logger.on('finish', () => {
+            process.exit(1);
+        });
     }
 })();
