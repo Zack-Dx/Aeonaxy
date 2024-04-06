@@ -15,7 +15,7 @@ const {
     MAILER_API_KEY,
 } = process.env;
 
-export const CONFIG = {
+const _config = {
     NODE_ENV,
     PORT,
     DATABASE_URL,
@@ -28,3 +28,5 @@ export const CONFIG = {
     DEFAULT_USER_ROLE,
     MAILER_API_KEY,
 };
+
+export const CONFIG = Object.freeze(_config);
