@@ -30,23 +30,60 @@ export function CourseController() {
                 );
         }),
         courses: asyncHandler(async (req, res) => {
-            let { page = 1, limit = 10 } = req.query;
+            let { page = 1, limit = 10, level, category } = req.query;
             page = parseInt(page);
             limit = parseInt(limit);
 
-            // Checking if page or limit is not a number, setting default values
+            // Page number validation
             if (isNaN(page) || isNaN(limit) || page <= 0 || limit <= 0) {
                 page = 1;
                 limit = 10;
             }
 
             const offset = (page - 1) * limit;
+            let courses = null;
 
-            const courses = await prisma.course.findMany({
-                skip: offset,
-                take: limit,
-            });
+            if (level && category) {
+                level = String(level).toLowerCase();
+                category = String(category).toLowerCase();
+                courses = await prisma.course.findMany({
+                    skip: offset,
+                    take: limit,
+                    where: {
+                        level: level,
+                        category: category,
+                    },
+                });
+            }
 
+            if (level) {
+                level = String(level).toLowerCase();
+                courses = await prisma.course.findMany({
+                    skip: offset,
+                    take: limit,
+                    where: {
+                        level: level,
+                    },
+                });
+            }
+
+            if (category) {
+                category = String(category).toLowerCase();
+                courses = await prisma.course.findMany({
+                    skip: offset,
+                    take: limit,
+                    where: {
+                        category: category,
+                    },
+                });
+            }
+
+            if (courses === null) {
+                courses = await prisma.course.findMany({
+                    skip: offset,
+                    take: limit,
+                });
+            }
             if (courses.length === 0) {
                 throw new ApiError(404, 'No courses found.');
             }
@@ -61,6 +98,7 @@ export function CourseController() {
                     )
                 );
         }),
+
         update: asyncHandler(async (req, res) => {
             const { id } = req.params;
 
