@@ -3,7 +3,13 @@ import { CONFIG } from '../config/index.js';
 
 const logger = winston.createLogger({
     level: 'info',
-    format: winston.format.json(),
+    defaultMeta: {
+        serviceName: 'backend_service',
+    },
+    format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.json()
+    ),
     transports: [
         new winston.transports.File({
             filename: './logs/error.log',
@@ -16,7 +22,10 @@ const logger = winston.createLogger({
 if (CONFIG.NODE_ENV !== 'production') {
     logger.add(
         new winston.transports.Console({
-            format: winston.format.simple(),
+            format: winston.format.combine(
+                winston.format.timestamp(),
+                winston.format.json()
+            ),
         })
     );
 }
