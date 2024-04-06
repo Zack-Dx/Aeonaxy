@@ -5,7 +5,8 @@
     "type": "module",
     "main": "index.js",
     "scripts": {
-        "start": "node src/index.js",
+        "build": "esbuild ./src/index.js --bundle --platform=node --packages=external --outfile=./build/index.cjs",
+        "start": "node build/index.cjs",
         "dev": "nodemon src/index.js",
         "prisma:migrate": "npx prisma migrate dev",
         "format:check": "npx prettier . --check",
@@ -27,6 +28,7 @@
         "winston": "^3.13.0"
     },
     "devDependencies": {
+        "esbuild": "^0.20.2",
         "nodemon": "^3.1.0",
         "prettier": "3.2.5",
         "prisma": "^5.12.0"

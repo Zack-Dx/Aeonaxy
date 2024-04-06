@@ -18,6 +18,11 @@ cloudinary.config({
     api_secret: CONFIG.CLOUDINARY_API_SECRET,
 });
 
+// Health
+app.get('/health', (req, res) => {
+    return res.status(200).json({ message: 'OK' });
+});
+
 // Routes
 app.use('/api/user', userRouter);
 app.use('/api/course', courseRouter);
