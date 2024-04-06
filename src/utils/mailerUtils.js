@@ -70,3 +70,49 @@ export const sendEnrollmentSuccessMail = (receiver, courseName) => {
         html: htmlContent,
     });
 };
+
+export const sendUserRegistrationSuccessEmail = (receiver) => {
+    const htmlContent = `
+        <html>
+            <head>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f2f2f2;
+                        padding: 20px;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #fff;
+                        border-radius: 5px;
+                        padding: 20px;
+                    }
+                    h2 {
+                        color: #333;
+                    }
+                    p {
+                        color: #666;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h2>Welcome to Our Platform, ${receiver.name}!</h2>
+                    <p>Thank you for registering with us.</p>
+                    <p>We're excited to have you on board.</p>
+                    <p>If you have any questions or need assistance, feel free to contact us.</p>
+                    <p>Best regards,</p>
+                    <p>The Team</p>
+                </div>
+            </body>
+        </html>
+    `;
+
+    resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: receiver.email,
+        subject: 'User Registration',
+        html: htmlContent,
+    });
+};

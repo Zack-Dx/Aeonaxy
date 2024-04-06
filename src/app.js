@@ -1,10 +1,10 @@
+import { CONFIG } from './config/index.js';
+import { errorHandler } from './middleware/error.middleware.js';
 import express from 'express';
 import userRouter from './routes/user.routes.js';
 import courseRouter from './routes/course.routes.js';
 import enrollmentRouter from './routes/enrollement.routes.js';
 import cloudinary from 'cloudinary';
-import { CONFIG } from './config/index.js';
-import { errorHandler } from './middleware/error.middleware.js';
 
 const app = express();
 

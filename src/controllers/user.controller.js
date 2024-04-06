@@ -1,5 +1,5 @@
 import { DEFAULT_AVATAR_URL } from '../constants/index.js';
-import jwt from 'jsonwebtoken';
+import { CONFIG } from '../config/index.js';
 import { prisma } from '../../client/prismaClient.js';
 import { v2 as cloudinary } from 'cloudinary';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -12,8 +12,10 @@ import {
     generateAccessToken,
     generateResetPassToken,
 } from '../utils/jwtUtils.js';
-import { CONFIG } from '../config/index.js';
-import { sendResetPasswordEmail } from '../utils/mailerUtils.js';
+import {
+    sendResetPasswordEmail,
+    sendUserRegistrationSuccessEmail,
+} from '../utils/mailerUtils.js';
 
 export function UserController() {
     return {
@@ -72,6 +74,9 @@ export function UserController() {
                     role: CONFIG.DEFAULT_USER_ROLE,
                 },
             });
+
+            // Sending mail to the registered user
+            sendUserRegistrationSuccessEmail(registeredUser);
 
             return res
                 .status(201)
