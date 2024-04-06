@@ -26,3 +26,47 @@ export const sendResetPasswordEmail = (receiver, resetPassToken) => {
         html: htmlContent,
     });
 };
+
+export const sendEnrollmentSuccessMail = (receiver, courseName) => {
+    const htmlContent = `
+    <html>
+        <head>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f2f2f2;
+                    padding: 20px;
+                }
+                .container {
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #fff;
+                    border-radius: 5px;
+                    padding: 20px;
+                }
+                h2 {
+                    color: #333;
+                }
+                p {
+                    color: #666;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h2>Course Enrollment Successful</h2>
+                <p>Hello ${receiver.name},</p>
+                <p>You have successfully enrolled in the course "${courseName}".</p>
+                <p>Enjoy your learning!</p>
+            </div>
+        </body>
+    </html>
+`;
+
+    resend.emails.send({
+        from: 'onboarding@resend.dev',
+        to: receiver.email,
+        subject: 'Course Enrollment',
+        html: htmlContent,
+    });
+};
