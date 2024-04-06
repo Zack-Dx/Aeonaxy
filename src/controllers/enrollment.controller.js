@@ -57,5 +57,49 @@ export function EnrollmentController() {
                     )
                 );
         }),
+        enrollments: asyncHandler(async (req, res) => {
+            const { id } = req.user;
+
+            // Querying Enrollments
+            const user = await prisma.user.findUnique({
+                where: { id },
+                include: {
+                    enrollments: {
+                        include: {
+                            course: true,
+                        },
+                    },
+                },
+            });
+
+            // No enrollments response
+            if (user.enrollments.length === 0) {
+                return res
+                    .status(200)
+                    .json(
+                        new ApiResponse(
+                            200,
+                            [],
+                            'User is not enrolled in any course.'
+                        )
+                    );
+            }
+
+            // Structuring Response
+            const enrolledCourses = user.enrollments.map(
+                (enrollment) => enrollment.course
+            );
+
+            return res.status(200).json(
+                new ApiResponse(
+                    200,
+                    {
+                        count: enrolledCourses.length,
+                        enrolledCourses,
+                    },
+                    'Enrollments fetched successfully.'
+                )
+            );
+        }),
     };
 }

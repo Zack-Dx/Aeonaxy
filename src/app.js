@@ -21,7 +21,7 @@ cloudinary.config({
 // Routes
 app.use('/api/user', userRouter);
 app.use('/api/course', courseRouter);
-app.use('/api/user/enroll', enrollmentRouter);
+app.use('/api/user/enrollments', enrollmentRouter);
 
 // Global Error Handler
 app.use(errorHandler);
